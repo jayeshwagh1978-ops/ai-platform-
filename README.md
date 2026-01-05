@@ -1,1 +1,2 @@
-# ai-platform-
+# campus-placement-ai-platform
+Campus Placement
