@@ -1,0 +1,74 @@
+# database/fallback_db.py
+import streamlit as st
+import pandas as pd
+from datetime import datetime
+
+class FallbackDatabase:
+    """Fallback in-memory database for demo mode"""
+    
+    def __init__(self):
+        self.students = []
+        self.jobs = []
+        self.applications = []
+        self.users = []
+        
+        # Create demo data
+        self._create_demo_data()
+    
+    def _create_demo_data(self):
+        # Demo users
+        self.users = [
+            {'user_id': 1, 'username': 'student1', 'role': 'student'},
+            {'user_id': 2, 'username': 'college1', 'role': 'college_admin'},
+            {'user_id': 3, 'username': 'recruiter1', 'role': 'recruiter'},
+        ]
+        
+        # Demo jobs
+        self.jobs = [
+            {
+                'job_id': 1,
+                'title': 'Software Engineer Intern',
+                'company': 'Google',
+                'location': 'Bangalore',
+                'job_type': 'internship',
+                'skills': 'Python, Algorithms, OOP',
+                'description': 'Looking for talented interns...'
+            },
+            {
+                'job_id': 2,
+                'title': 'Data Analyst',
+                'company': 'Amazon',
+                'location': 'Hyderabad',
+                'job_type': 'full_time',
+                'skills': 'SQL, Python, Statistics',
+                'description': 'Join our data team...'
+            }
+        ]
+    
+    def get_jobs(self, filters=None):
+        """Get jobs with optional filters"""
+        df = pd.DataFrame(self.jobs)
+        if filters:
+            for key, value in filters.items():
+                if value and key in df.columns:
+                    df = df[df[key].str.contains(value, case=False, na=False)]
+        return df
+    
+    def create_application(self, student_id, job_id):
+        """Create a job application"""
+        application = {
+            'application_id': len(self.applications) + 1,
+            'student_id': student_id,
+            'job_id': job_id,
+            'status': 'pending',
+            'date': datetime.now()
+        }
+        self.applications.append(application)
+        return application['application_id']
+    
+    def authenticate_user(self, username, password):
+        """Simple authentication for demo"""
+        for user in self.users:
+            if user['username'] == username:
+                return user
+        return None
